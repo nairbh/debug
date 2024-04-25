@@ -110,75 +110,68 @@ void non_interactive_mode(void)
 int run_command(char *input)
 {
     pid_t pid;
-    int status, i;
-	int found;
+    int status;
     char *argv[64];
     char *token;
+	int i;
     int argc = 0;
-    char *path_directories[] = {"/bin", "/usr/bin", NULL};
     char exec_path[256];
+    char *path_directories[] = {"/bin", "/usr/bin", NULL};
 
     char *start = input;
-    while (isspace((unsigned char)*start)) start++;
-    if (*start == '\0') { 
-        return 0;  
+    while (*start && isspace((unsigned char)*start)) start++;
+    if (*start == '\0') {
+        return 0;
     }
 
-
-    token = strtok(input, " ");
-    while (token != NULL && argc < 63)
-    {
+    token = strtok(start, " ");
+    while (token && argc < 63) {
         argv[argc++] = token;
         token = strtok(NULL, " ");
     }
     argv[argc] = NULL;
 
-    if (argc == 0)
-    {
+    if (argc == 0) {
         fprintf(stderr, "No command entered.\n");
         return -1;
     }
 
-    if (argc > 0 && strcmp(argv[0], "exit") == 0)
-    {
+    if (strcmp(argv[0], "exit") == 0) {
         free(input);
         exit(EXIT_SUCCESS);
     }
 
-     found = 0;
-    for (i = 0; path_directories[i] != NULL && !found; i++) {
-        snprintf(exec_path, sizeof(exec_path), "%s/%s", path_directories[i], argv[0]);
-        if (access(exec_path, X_OK) == 0) {
-            found = 1;
+    if (argv[0][0] == '/' || strchr(argv[0], '/') != NULL) {
+        strcpy(exec_path, argv[0]);
+    } else {
+        int found = 0;
+        for (i = 0; path_directories[i] != NULL && !found; i++) {
+            snprintf(exec_path, sizeof(exec_path), "%s/%s", path_directories[i], argv[0]);
+            if (access(exec_path, X_OK) == 0) {
+                found = 1;
+            }
         }
-    }
-
-    if (!found) {
-        fprintf(stderr, "Command not found.\n");
-        return -1;
+        if (!found) {
+            fprintf(stderr, "Command not found.\n");
+            return -1;
+        }
     }
 
     pid = fork();
-    if (pid == -1)
-    {
-        perror("Error");
-        return (-1);
-    }
-    else if (pid == 0)
-    {
+    if (pid == -1) {
+        perror("Error forking");
+        return -1;
+    } else if (pid == 0) {
         execve(exec_path, argv, NULL);
-        perror("Error");
+        perror("Error executing command");
         exit(EXIT_FAILURE);
     }
-    else
-    {
-        if (waitpid(pid, &status, 0) == -1)
-        {
-            perror("Error");
-            return (-1);
-        }
+
+    if (waitpid(pid, &status, 0) == -1) {
+        perror("Error waiting for command");
+        return -1;
     }
-    return (0);
+    return WIFEXITED(status) ? WEXITSTATUS(status) : -1;
 }
 
 /**
