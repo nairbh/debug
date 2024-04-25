@@ -111,20 +111,19 @@ int run_command(char *input)
 {
     pid_t pid;
     int status, i;
-int found;
+	int found;
     char *argv[64];
     char *token;
     int argc = 0;
     char *path_directories[] = {"/bin", "/usr/bin", NULL};
     char exec_path[256];
 
-    char *tmp = input;
-    while (*tmp && isspace((unsigned char)*tmp)) {
-        tmp++;
+    char *start = input;
+    while (isspace((unsigned char)*start)) start++;
+    if (*start == '\0') { 
+        return 0;  
     }
-    if (*tmp == '\0') {
-        return 0; 
-    }
+
 
     token = strtok(input, " ");
     while (token != NULL && argc < 63)
