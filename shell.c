@@ -34,6 +34,14 @@ int main(void) {
         if (strcmp(command, "exit") == 0) {
             break;
         }
+        if (strcmp(command, "env") == 0)
+        {
+            char **env;
+            for(env = environ; *env != NULL; env++)
+            {
+                printf("%s", *env);
+            }
+        }
 
         args = parse_args(command);
         if (args && args[0]) {
@@ -65,17 +73,17 @@ int read_command(char *command, size_t size) {
 }
 
 char **parse_args(char *command) {
+     char *token = NULL;
     int argc = 0;
     char **argv = malloc(sizeof(char *) * (COMMAND_SIZE + 1));
     if (argv == NULL) {
         perror("Failed to allocate argv");
         exit(EXIT_FAILURE);
     }
-
-    char *token = strtok(command, " \t");
+    token = strtok(command, " \n\t");
     while (token != NULL && argc < COMMAND_SIZE) {
         argv[argc++] = token;
-        token = strtok(NULL, " \t");
+        token = strtok(NULL, " \n\t");
     }
     argv[argc] = NULL;
 
@@ -83,13 +91,15 @@ char **parse_args(char *command) {
 }
 
 void execute_command(char **args) {
+
+    pid_t pid;
     char *executable_path = find_executable(args[0]);
     if (!executable_path) {
         fprintf(stderr, "Command not found: %s\n", args[0]);
         return;
     }
 
-    pid_t pid = fork();
+    pid = fork();
     if (pid == -1) {
         perror("fork failed");
         exit(EXIT_FAILURE);
@@ -107,6 +117,10 @@ void execute_command(char **args) {
 }
 
 char *find_executable(const char *command) {
+    const char *path;
+     char *result = NULL;
+    char *path_copy;
+    char *token = NULL;
     if (strchr(command, '/')) {
         if (access(command, X_OK) == 0) {
             return strdup(command);
@@ -114,12 +128,13 @@ char *find_executable(const char *command) {
         return NULL;
     }
 
-    const char *path = getenv("PATH");
+   path = getenv("PATH");
     if (!path) return NULL;
 
-    char *path_copy = strdup(path);
-    char *result = NULL;
-    char *token = strtok(path_copy, ":");
+    
+    path_copy = strdup(path);
+   
+    token = strtok(path_copy, ":");
 
     while (token != NULL) {
         char *full_path = malloc(strlen(token) + strlen(command) + 2);
