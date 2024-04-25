@@ -1,12 +1,9 @@
 #include "shell.h"
-#include <stdlib.h>
-#include <stddef.h>
 /**
- * split_string - Function that split an input string into
- * an array of arguments
+ * split_string - split an input string into an array of arguments
  * @input: The user input string to split
- *
- * Return: An array of pointers to the splited arguments,
+ * @command: the command to split
+ * Return: An array of splited arguments,
  * or NULL on failure.
  */
 char **split_string(char *input, char **command)
