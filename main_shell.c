@@ -13,14 +13,9 @@ int main(int argc, char **argv, char **env) {
         }
 
         n_char = getline(&input, &input_size, stdin);
-        if (n_char == -1) {
-            if (feof(stdin)) {  
-                free(input); 
-                break;
-            }
-            perror("Read error");
-            free(input);  
-            continue;
+        if (n_char == -1) { 
+            free(input); 
+            break; 
         }
 
         if (input[n_char - 1] == '\n') {
