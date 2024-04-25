@@ -9,7 +9,7 @@
 
 char **parse_args(char *command);
 void execute_command(char **args);
-void read_command(char *command, size_t size);
+int read_command(char *command, size_t size);
 void display_prompt(void);
 void sigint_handler(int unused);
 
@@ -44,8 +44,12 @@ void display_prompt(void)
 {
     printf("$ ");
 }
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
-void read_command(char *command, size_t size)
+int read_command(char *command, size_t size)
 {
     if (fgets(command, size, stdin) == NULL)
     {
@@ -60,7 +64,10 @@ void read_command(char *command, size_t size)
             exit(EXIT_FAILURE);
         }
     }
-    command[strcspn(command, "\n")] = '\0'; 
+
+    command[strcspn(command, "\n")] = '\0';
+
+    return 1;
 }
 
 char **parse_args(char *command)
