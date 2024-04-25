@@ -5,10 +5,9 @@ int main(int argc, char **argv, char **env) {
     char *command = NULL;
     size_t input_size = 0;
     ssize_t n_char = 0;
-    int status_return = 1;
     char *line;
      (void)argc; 
-    while (status_return && n_char != EOF) {
+   while (1) { 
         if (isatty(STDIN_FILENO)) {
             printf("Cisfun$ ");
         }
