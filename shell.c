@@ -14,7 +14,7 @@
  int main(void) {
     char command[128];
     int is_interactive = isatty(STDIN_FILENO);
-    signal(SIGINT, SIG_IGN); // Ignore SIGINT in parent
+    signal(SIGINT, SIG_IGN); 
 
     if (is_interactive) {
         display_prompt();
@@ -22,7 +22,7 @@
 
     while (1) {
         if (fgets(command, sizeof(command), stdin) == NULL) {
-            if (feof(stdin)) { // Handle EOF
+            if (feof(stdin)) {
                 printf("\n");
                 exit(EXIT_SUCCESS);
             } else {
@@ -30,7 +30,7 @@
                 continue;
             }
         }
-        command[strcspn(command, "\n")] = '\0'; // Remove newline character
+        command[strcspn(command, "\n")] = '\0'; 
 
         if (strcmp(command, "exit") == 0) {
             break;

@@ -1,8 +1,7 @@
 #ifndef SHELL_H
 #define SHELL_H
 
-#define DELIMITER " \t"
-
+#define DELIMITER " \t\r\n\a"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -13,7 +12,7 @@
 #include <signal.h>
 #include <errno.h>
 #include <stdarg.h>
-#define DELIMITER " \t\r\n\a"
+
 
 /*display_prompt.c*/
 void display_prompt(void);

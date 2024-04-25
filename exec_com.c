@@ -58,7 +58,7 @@ int custom_execlp(const char *file, const char *arg0, ...) {
  */
 void execute_command(const char *command) {
     pid_t child_pid = fork();
-
+    int j;
     if (child_pid == -1) {
         perror("fork");
         exit(EXIT_FAILURE);
@@ -77,7 +77,7 @@ void execute_command(const char *command) {
             exit(EXIT_SUCCESS);
         } else if (args[0] && strcmp(args[0], "env") == 0) {
             extern char **environ;
-            for (int j = 0; environ[j]; j++) {
+            for (j = 0; environ[j]; j++) {
                 printf("%s\n", environ[j]);
             }
             exit(EXIT_SUCCESS);
