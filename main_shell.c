@@ -7,7 +7,7 @@ int main(int argc, char **argv, char **env) {
     size_t input_size = 0;
     ssize_t n_char = 0;
     int status_return = 1;
-    char *line = strtok(input, " \n\t");
+    char *line= NULL; 
 
     (void)argc;
 
@@ -28,7 +28,7 @@ int main(int argc, char **argv, char **env) {
         if (input[n_char - 1] == '\n') {
             input[n_char - 1] = '\0';  
         }
-
+        line = strtok(input, " \n\t");
         while (line != NULL) {
             if (!check_spaces_tabs(line)) {  
                 args = split_string(line, &command);
