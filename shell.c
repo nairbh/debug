@@ -106,6 +106,9 @@ void non_interactive_mode(void)
 * Return: 0 on success, -1 on failure
 */
 
+int my_isspace(char c) {
+    return c == ' ' || c == '\t' || c == '\n' || c == '\r' || c == '\f' || c == '\v';
+}
 
 int run_command(char *input)
 {
@@ -119,7 +122,7 @@ int run_command(char *input)
     char *path_directories[] = {"/bin", "/usr/bin", NULL};
 
     char *start = input;
-    while (*start && isspace((unsigned char)*start)) start++;
+    while (*start && my_isspace((unsigned char)*start)) start++;
     if (*start == '\0') {
         return 0;
     }
