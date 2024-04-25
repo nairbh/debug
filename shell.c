@@ -100,63 +100,82 @@ void non_interactive_mode(void)
 * @input: The command to execute
 * Return: 0 on success, -1 on failure
 */
+
+
 int run_command(char *input)
 {
-	pid_t pid;
-	int status;
+    pid_t pid;
+    int status;
 
-	char *argv[64];
+    char *argv[64];
+    char *token;
+    int argc = 0;
+    char *path_directories[] = {"/bin", "/usr/bin", NULL};
+    char exec_path[256];
 
-	char *token;
+    // Check if input consists only of spaces or is empty
+    char *tmp = input;
+    while (*tmp && isspace((unsigned char)*tmp)) {
+        tmp++;
+    }
+    if (*tmp == '\0') {
+        return 0; // No command entered, just return 0
+    }
 
-	int argc = 0;
+    token = strtok(input, " ");
+    while (token != NULL && argc < 63)
+    {
+        argv[argc++] = token;
+        token = strtok(NULL, " ");
+    }
+    argv[argc] = NULL;
 
-	char path[256];
-
-	token = strtok(input, " ");
-	while (token != NULL && argc < 63)
-	{
-		argv[argc++] = token;
-		token = strtok(NULL, " ");
-	}
-	argv[argc] = NULL;
-    
     if (argc == 0)
     {
         fprintf(stderr, "No command entered.\n");
         return -1;
     }
-	if (argc > 0 && strcmp(argv[0], "exit") == 0)
-	{
+
+    if (argc > 0 && strcmp(argv[0], "exit") == 0)
+    {
         free(input);
-		exit(EXIT_SUCCESS);
-	}
-	pid = fork();
-	if (pid == -1)
-	{
-		perror("Error");
-		return (-1);
-	}
-	else if (pid == 0)
-	{
-		if (getenv("PATH") == NULL)
-		{
-			strcpy(path, "/bin:/usr/bin");
-			setenv("PATH", path, 1);
-		}
-		execvp(argv[0], argv);
-		perror("Error");
-		exit(EXIT_FAILURE);
-	}
-	else
-	{
-		if (waitpid(pid, &status, 0) == -1)
-		{
-			perror("Error");
-			return (-1);
-		}
-	}
-	return (0);
+        exit(EXIT_SUCCESS);
+    }
+
+    int found = 0;
+    for (int i = 0; path_directories[i] != NULL && !found; i++) {
+        snprintf(exec_path, sizeof(exec_path), "%s/%s", path_directories[i], argv[0]);
+        if (access(exec_path, X_OK) == 0) {
+            found = 1;
+        }
+    }
+
+    if (!found) {
+        fprintf(stderr, "Command not found.\n");
+        return -1;
+    }
+
+    pid = fork();
+    if (pid == -1)
+    {
+        perror("Error");
+        return (-1);
+    }
+    else if (pid == 0)
+    {
+        execve(exec_path, argv, NULL);
+        perror("Error");
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        if (waitpid(pid, &status, 0) == -1)
+        {
+            perror("Error");
+            return (-1);
+        }
+    }
+    return (0);
 }
 
 /**
