@@ -12,21 +12,39 @@ void execute_command(char **args);
 int read_command(char *command, size_t size);
 void display_prompt(void);
 void sigint_handler(int unused);
+extern char **environ;
 
 int main(void)
 {
     char command[COMMAND_SIZE];
     char **args;
+    char **env = NULL;
+    int is_interactive = isatty(STDIN_FILENO);
+
     signal(SIGINT, sigint_handler);
+
+    if (is_interactive) {
+        display_prompt(); 
+    }
 
     while (1)
     {
-        display_prompt();
-        read_command(command, sizeof(command));
+        if (read_command(command, sizeof(command)) == 0) { 
+            continue;
+        }
 
         if (strcmp(command, "exit") == 0)
         {
             break;
+        }
+
+        if (strcmp(command, "env") == 0)
+        {
+            for(env = environ; *env != NULL; env++)
+            {
+                printf("%s\n", *env);
+            }
+            continue;  
         }
 
         args = parse_args(command);
@@ -34,7 +52,11 @@ int main(void)
         {
             execute_command(args);
         }
-        free(args); 
+        free(args);
+
+        if (is_interactive) {
+            display_prompt();
+        }
     }
 
     return EXIT_SUCCESS;
@@ -44,10 +66,6 @@ void display_prompt(void)
 {
     printf("$ ");
 }
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 
 int read_command(char *command, size_t size)
 {
@@ -66,7 +84,6 @@ int read_command(char *command, size_t size)
     }
 
     command[strcspn(command, "\n")] = '\0';
-
     return 1;
 }
 
@@ -122,6 +139,5 @@ void sigint_handler(int unused)
 {
     (void)unused;
     printf("\n");
-    fflush(stdout); 
+    fflush(stdout);
 }
-
