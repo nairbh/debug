@@ -7,8 +7,9 @@ int main(int argc, char **argv, char **env) {
     size_t input_size = 0;
     ssize_t n_char = 0;
     int status_return = 1;
+    char *line = strtok(input, " \n\t");
 
-    (void)argc;  // Unused parameter
+    (void)argc;
 
     while (status_return && n_char != EOF) {
         if (isatty(STDIN_FILENO)) {
@@ -17,7 +18,7 @@ int main(int argc, char **argv, char **env) {
         
         n_char = getline(&input, &input_size, stdin);
         if (n_char == -1) {
-            if (feof(stdin)) {  // Check for end of file on stdin
+            if (feof(stdin)) {  
                 break;
             }
             perror("Read error");
@@ -25,12 +26,11 @@ int main(int argc, char **argv, char **env) {
         }
 
         if (input[n_char - 1] == '\n') {
-            input[n_char - 1] = '\0';  // Remove the newline character
+            input[n_char - 1] = '\0';  
         }
 
-        char *line = strtok(input, " \n\t");
         while (line != NULL) {
-            if (!check_spaces_tabs(line)) {  // Check if the line is not just spaces or tabs
+            if (!check_spaces_tabs(line)) {  
                 args = split_string(line, &command);
                 if (args == NULL) {
                     free(line);
@@ -53,7 +53,7 @@ int main(int argc, char **argv, char **env) {
             line = strtok(NULL, " \n\t");
         }
         free(input);
-        input = NULL;  // Reset input for the next read
+        input = NULL; 
         input_size = 0;
     }
     return 0;
