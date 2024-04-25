@@ -1,5 +1,10 @@
 #include "shell.h"
-
+#include <ctype.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/wait.h>
+#include <stdio.h>
+#include <stdlib.h>
 /**
 * display_prompt - Display the shell prompt
 */
@@ -105,21 +110,20 @@ void non_interactive_mode(void)
 int run_command(char *input)
 {
     pid_t pid;
-    int status;
-
+    int status, i;
+int found;
     char *argv[64];
     char *token;
     int argc = 0;
     char *path_directories[] = {"/bin", "/usr/bin", NULL};
     char exec_path[256];
 
-    // Check if input consists only of spaces or is empty
     char *tmp = input;
     while (*tmp && isspace((unsigned char)*tmp)) {
         tmp++;
     }
     if (*tmp == '\0') {
-        return 0; // No command entered, just return 0
+        return 0; 
     }
 
     token = strtok(input, " ");
@@ -142,8 +146,8 @@ int run_command(char *input)
         exit(EXIT_SUCCESS);
     }
 
-    int found = 0;
-    for (int i = 0; path_directories[i] != NULL && !found; i++) {
+     found = 0;
+    for (i = 0; path_directories[i] != NULL && !found; i++) {
         snprintf(exec_path, sizeof(exec_path), "%s/%s", path_directories[i], argv[0]);
         if (access(exec_path, X_OK) == 0) {
             found = 1;
