@@ -1,75 +1,183 @@
-# holbertonschool-simple_shell
+# _printf
 
+_printf is a project for Holberton School which imitates the "printf()" function found in the "stdio.h" library.
 
-## What is Shell
+_printf allows users to print a variety of characters and variables on their terminal.
 
-Shell is a command-line interpreter providing a user interface to access the operating system's services. This project involves the development of a sh-type shell program (Bourne Shell), typically used through a terminal emulator.
-What is it for
+## Project Tests
 
-The shell interprets commands. It incorporates features such as process control, input/output redirection, and is used to write batch programs or scripts. Unix-like systems all have at least one Bourne shell-compatible interpreter.
-Project Information
-Environment
+This project was tested using these compilation flags :
+`gcc -Wall -Werror -Wextra -pedantic -std=gnu89 -Wno-format *.c`
 
-OS: Ubuntu 20.04 LTS
-Language: C
-Compiler: gcc 9.3.0
-Editor: VIM 8.1.2269
-Version control: Git
-Style: Betty style
-General Requirements
+This project was subjected to multiple tests using the main.c file which we included here:
+```c
+#include <limits.h>
+#include <stdio.h>
+#include "main.h"
 
-Use of vi, vim, emacs editors
-Compilation on Ubuntu 14.04 LTS with gcc 4.8.4
-Compliance with Betty style, without memory leaks
-Output identical to sh (/bin/sh)
-Authorized Functions
+/**
+ * main - Entry point
+ *
+ * Return: Always 0
+ */
+int main(void)
+{
+    int len;
+    int len2;
+    unsigned int ui;
+    void *addr;
 
-List of authorized functions such as execve, exit, fork, malloc, write, etc.
-Compilation Link
+    len = _printf("Let's try to printf a simple sentence.\n");
+    len2 = printf("Let's try to printf a simple sentence.\n");
+    ui = (unsigned int)INT_MAX + 1024;
+    addr = (void *)0x7ffe637541f0;
+    _printf("Length:[%d, %i]\n", len, len);
+    printf("Length:[%d, %i]\n", len2, len2);
+    _printf("Negative:[%d]\n", -762534);
+    printf("Negative:[%d]\n", -762534);
+    _printf("Unsigned:[%u]\n", ui);
+    printf("Unsigned:[%u]\n", ui);
+    _printf("Unsigned octal:[%o]\n", ui);
+    printf("Unsigned octal:[%o]\n", ui);
+    _printf("Unsigned hexadecimal:[%x, %X]\n", ui, ui);
+    printf("Unsigned hexadecimal:[%x, %X]\n", ui, ui);
+    _printf("Character:[%c]\n", 'H');
+    printf("Character:[%c]\n", 'H');
+    _printf("String:[%s]\n", "I am a string !");
+    printf("String:[%s]\n", "I am a string !");
+    _printf("Address:[%p]\n", addr);
+    printf("Address:[%p]\n", addr);
+    len = _printf("Percent:[%%]\n");
+    len2 = printf("Percent:[%%]\n");
+    _printf("Len:[%d]\n", len);
+    printf("Len:[%d]\n", len2);
+    _printf("Unknown:[%r]\n");
+    printf("Unknown:[%r]\n");
+    _printf("Rot13 : [%R]\n", "Awesome!");
+    printf("Rot13 : [%R]\n", "Awesome!");
+    return (0);
+}
+```
 
-gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
-Documentation
+Output:
+```c
+Let's try to printf a simple sentence.
+Let's try to printf a simple sentence.
+Length:[39, 39]
+Length:[39, 39]
+Negative:[-762534]
+Negative:[-762534]
+Unsigned:[2147484671]
+Unsigned:[2147484671]
+Unsigned octal:[20000001777]
+Unsigned octal:[20000001777]
+Unsigned hexadecimal:[800003ff, 800003FF]
+Unsigned hexadecimal:[800003ff, 800003FF]
+Character:[H]
+Character:[H]
+String:[I am a string !]
+String:[I am a string !]
+Address:[%p]
+Address:[0x7ffe637541f0]
+Percent:[%]
+Percent:[%]
+Len:[12]
+Len:[12]
+Unknown:[%r]
+Unknown:[%r]
+Rot13 : [Njfbzr!]
+Rot13 : [%R]
 
-## Installation
-Instructions for cloning the repository, changing directories, compiling, and running the shell in interactive or non-interactive mode.
-Tests
-Example of execution and output after compilation.
+```
+## Man-page Installation
 
-$ ./hsh
-($) /bin/ls
-hsh main.c shell.c
-($)
-($) exit
-$
-
-$ echo "/bin/ls" | ./hsh
-hsh main.c shell.c test_ls_2
-$
-$ cat test_ls_2
-/bin/ls
-/bin/ls
-$
-$ cat test_ls_2 | ./hsh
-hsh main.c shell.c test_ls_2
-hsh main.c shell.c test_ls_2
-
+To install the man-page use the following commands :
+```c
+sudo mkdir /usr/local/man/man3
+sudo install -g 0 -o 0 -m 0644 man_3_printf /usr/local/man/man3/_printf.3
+sudo gzip /usr/local/man/man3/_printf.3
+sudo mandb
+```
 ## Files
 
-Description and links to different project files, such as the manual, scripts, and source code files.
+|File |Description |
+|---------------------|------------------------------------------------------------------------------|
+|main.h | Header file containing function prototypes and necessary includes |
+|_printf.c | Main file containing functions to print regular characters and detect specifiers used |
+|print_functions.c | File containing the different functions that allow _printf.c to print variables |
+|more_print_functions.c | File containing additional functions that allow _printf.c to print variables |
+|man_3_printf | Text file containing information about _printf |
+|Flowchart_printf.jpg | Image file containing a flowchart that showcases how _printf functions |
 
-## Flowchart of the function _printf
-![Flowchart of the function Simple Shell](flowchart/Flowchart_interactif.jpg?raw=true)
 
-Shell Start: Initializing the environment.
-Displaying the Command Prompt: In interactive mode, the shell displays a prompt.
-Reading the Command: The shell reads the command line entered by the user.
-Analyzing the Command: Identification of the command and arguments.
-Executing the Command: Either a built-in command or an external command.
-Managing Results: The shell handles results or errors.
-Return to Command Prompt or Shell Termination: In interactive mode, return to the command prompt, otherwise termination of the shell.
+## Usage
 
-## Authors
-**Jérôme Romand, Néia Santos Nascimento, Sofiane Arfane.**
-<br>
+For the function "_printf()" to work , the correct specifiers needs to be used.
+The list of all current working specifiers is provided and updated here :
 
-**Made for the HOLBERTON SCHOOL - cohort THO-0224**
+|Variable Type  |Specifier |
+|---------------|----------|
+|String |%s |
+|Integer |%d |
+|Character |%c |
+|Integer base 10|%i |
+|Percent symbol |%% |
+|Rot13 |%R |
+|unsigned int |%u |
+|Integer base 8 |%o |
+|integer base 16|%x & %X|
+
+When the function "_printf()" is succesful in printing the data sent to it, the return value is a count of all characters printed, else if it fails to print, the return value is -1.
+
+## Examples
+
+Basic single character example:
+```c
+char character = 'C';
+
+_printf("I %c you", character);
+```
+Result :
+`I C you`
+
+
+Basic string example:
+```c
+char str_to_print[] = "world!";
+
+_printf("Hello %s", str_to_print);
+```
+Result :
+`Hello world!`
+
+
+Basic integer example:
+```c
+int number = 404;
+
+_printf("If you see %d, you are lost", number);
+```
+Result :
+`If you see 404, you are lost`
+
+
+Advanced example:
+```c
+int number = 0;
+char str_to_print[] = "is a well rounded number";
+
+_printf("The number %d %s", number, str_to_print);
+```
+Result :
+`The number 0 is a well rounded number`
+
+
+## Contributors
+
+This project was made by , Fassih Belmokhtar and José Puertas
+
+## Special Mention
+
+# Holberton School
+
+This project was made possible by Holberton School
