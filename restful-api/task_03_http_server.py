@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 """
-    Module that sets up a basic HTTP Server
+    Module that set up basic HTTP Server
 """
+
 
 from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
@@ -9,13 +10,12 @@ import json
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
     """
-    Class that creates a simple server
+    Class that create a simple server
     """
 
     def do_GET(self):
         """
-        Method that handles GET requests
-        """
+        Method that handle GET request"""
         if self.path == '/':
             self.send_response(200)
             self.send_header('Content-type', 'text/plain')
@@ -46,19 +46,17 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(b"OK")
         else:
-            # Envoi d'une réponse 404 basique
             self.send_response(404)
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
-            # Message simplifié pour correspondre à ce que le test pourrait attendre
-            self.wfile.write(b'404 Not Found\n')
+            self.wfile.write(b'404 Not Found')
 
 
 def run(
         server_class=HTTPServer,
         handler_class=SimpleHTTPRequestHandler,
         port=8000):
-    """ Function that runs the server """
+    """ Function that run the server """
     server_address = ('localhost', port)
     httpd = server_class(server_address, handler_class)
     httpd.serve_forever()
@@ -66,6 +64,6 @@ def run(
 
 if __name__ == "__main__":
     """
-    Main function that runs the server
+        Main function that run the server
     """
     run()
