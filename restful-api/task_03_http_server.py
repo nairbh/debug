@@ -1,41 +1,70 @@
-#!/usr/bin/env python3
-from http.server import BaseHTTPRequestHandler, HTTPServer
+#!/usr/bin/python3
+"""
+    Module that set up basic HTTP Server
+"""
+
+import http.server
+
+from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
 
+
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
+    """
+    Class that create a simple server
+    """
+
     def do_GET(self):
+        """
+        Method that handle GET request"""
         if self.path == '/':
-            # Respond with a simple text message
             self.send_response(200)
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
-            self.wfile.write(b"Hello, this is a simple API!")
+            self.wfile.write(b'Hello, this is a simple API!')
         elif self.path == '/data':
-            # Serve JSON data
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
-            data = {"name": "John", "age": 30, "city": "New York"}
-            self.wfile.write(json.dumps(data).encode('utf-8'))
-        elif self.path == '/status':
-            # Return OK for status check
+            data = {
+                "name": "John",
+                "age": 30,
+                "city": "New York"
+            }
+            self.wfile.write(json.dumps(data).encode("utf-8"))
+        elif self.path == '/info':
             self.send_response(200)
-            self.send_header('Content-type', 'text/plain')
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            data = {
+                "version": "1.0",
+                "description": "A simple API built with http.server"
+            }
+            self.wfile.write(json.dumps(data).encode("utf-8"))
+        elif self.path == "/status":
+            self.send_response(200)
+            self.send_header("Content-type", "text/plain")
             self.end_headers()
             self.wfile.write(b"OK")
         else:
-            # Handle 404 Not Found
             self.send_response(404)
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
-            self.wfile.write(b"Endpoint not found")
+            self.wfile.write(b'404 Not Found')
 
-def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler):
-    port = 8000
-    server_address = ('', port)
+
+def run(
+        server_class=HTTPServer,
+        handler_class=SimpleHTTPRequestHandler,
+        port=8000):
+    """ Function that run the server """
+    server_address = ('localhost', port)
     httpd = server_class(server_address, handler_class)
-    print(f"Starting server on port {port}...")
     httpd.serve_forever()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
+    """
+        Main function that run the server
+    """
     run()
