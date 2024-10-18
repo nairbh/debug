@@ -51,7 +51,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
             # Message simplifié pour correspondre à ce que le test pourrait attendre
-            self.wfile.write(b'404 Not Found')
+            self.wfile.write(b'404 Not Found\n')
 
 
 def run(
