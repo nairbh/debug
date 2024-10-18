@@ -52,7 +52,14 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(b"OK")
 
         else:
-            self.send_error(404, "Not Found")
+            self.send_response(404)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            error_message = {
+                "error": "Not Found",
+                "message": f"The endpoint {self.path} does not exist."
+            }
+            self.wfile.write(json.dumps(error_message).encode("utf-8"))
 
 
 PORT = 8000
